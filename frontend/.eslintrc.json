@@ -1,3 +1,67 @@
 {
-  "extends": "next/core-web-vitals"
+  "plugins": ["prettier", "@typescript-eslint", "sonarjs", "jsx-a11y"],
+  "extends": [
+    "prettier",
+    "next/core-web-vitals",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:sonarjs/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      },
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    },
+    "import/extensions": [".js", ".ts"]
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "object-curly-spacing": ["warn", "always"],
+    "no-unused-vars": "off", // Disable for JS
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
+    "@typescript-eslint/no-unused-vars": [ // Enable for TS
+      "warn",
+      {
+        "vars": "all",
+        "args": "none"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": [
+      "warn",
+      {
+        "ignoreRestArgs": true
+      }
+    ],
+    "endOfLine": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.test.tsx",
+        "*.test.ts",
+        "src/shared/tests/apiHandlers.ts"
+      ],
+      "rules": {
+        "sonarjs/no-duplicate-string": [
+          "off"
+        ],
+        "max-lines-per-function": [
+          "off"
+        ],
+        "sonarjs/no-identical-functions": [
+          "off"
+        ]
+      }
+    }
+  ]
 }

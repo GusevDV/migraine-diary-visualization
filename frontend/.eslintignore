@@ -1,0 +1,6 @@
+jest.config.js
+build
+reportWebVitals.ts
+cypress/*
+!cypress/integration/*
+setupProxy.js

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "npx prettier --config .prettierrc --write src/**/*.{tsx,ts}",
+    "lint:write": "eslint --fix --ext ts --ext tsx --ext js --color src/"
   },
   "dependencies": {
     "@next/font": "13.1.1",
@@ -19,5 +21,21 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.4"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-sonarjs": "^0.17.0",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "npm run prettier",
+      "npm run lint:write"
+    ]
   }
 }
