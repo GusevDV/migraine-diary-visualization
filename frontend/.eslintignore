@@ -1,6 +1,7 @@
 jest.config.js
-build
-reportWebVitals.ts
-cypress/*
-!cypress/integration/*
-setupProxy.js
+next-env.d.ts
+next.config.js
+tsconfig.json
+next-i18next.config.js
+shared/lib/webpush.ts
+public
