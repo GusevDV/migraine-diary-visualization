@@ -13,7 +13,7 @@ export class ImportService {
     return newImport.save();
   }
 
-  async getOne(id: string): Promise<IImport> {
+  async findOne(id: string): Promise<IImport> {
     const existingImport = await this.importModel.findById(id).exec();
     if (!existingImport) {
       throw new NotFoundException(`Import #${id} not found`);

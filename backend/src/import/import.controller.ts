@@ -13,6 +13,6 @@ export class ImportController {
   }
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Import> {
-    return this.importService.getOne(id);
+    return this.importService.findOne(id);
   }
 }

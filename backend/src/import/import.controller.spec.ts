@@ -24,6 +24,10 @@ describe('ImportController', () => {
         {
           provide: ImportService,
           useValue: {
+            findOne: jest.fn().mockResolvedValue({
+              timestamp: 1672863474,
+              headache: true,
+            }),
             create: jest.fn().mockResolvedValue(createImportDto),
           },
         },
@@ -38,7 +42,7 @@ describe('ImportController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create()', () => {
+  describe('create', () => {
     it('should create a new import', async () => {
       const createSpy = jest
         .spyOn(service, 'create')
@@ -46,6 +50,22 @@ describe('ImportController', () => {
 
       await controller.create(createImportDto);
       expect(createSpy).toHaveBeenCalledWith(createImportDto);
+
+      await expect(controller.create(createImportDto)).resolves.toEqual(
+        mockImport,
+      );
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return the document', async () => {
+      await expect(
+        controller.findOne('63b5e128f7285a274efba552'),
+      ).resolves.toEqual({
+        timestamp: 1672863474,
+        headache: true,
+      });
+      expect(service.findOne).toHaveBeenCalled();
     });
   });
 });
