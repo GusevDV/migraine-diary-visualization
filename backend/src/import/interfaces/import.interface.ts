@@ -1,6 +1,4 @@
-import { Document } from 'mongoose';
-
-export interface IImport extends Document {
+export interface IImport {
   readonly timestamp: number;
   readonly headache: boolean;
 }
