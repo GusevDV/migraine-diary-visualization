@@ -1,11 +1,7 @@
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray } from 'class-validator';
+import { ImportDto } from './import.dto';
 
 export class CreateImportDto {
-  @IsNumber()
-  @IsNotEmpty()
-  readonly timestamp: number;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  readonly headache: boolean;
+  @IsArray()
+  records: ImportDto[];
 }

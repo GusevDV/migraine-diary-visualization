@@ -2,19 +2,42 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ImportController } from './import.controller';
 import { ImportService } from './import.service';
 import { CreateImportDto } from './dto/create-import.dto';
+import { Readable } from 'stream';
+import mockfs from 'mock-fs';
+
+const file: Express.Multer.File = {
+  fieldname: 'file.csv',
+  originalname: 'file.csv',
+  path: '/files/',
+  stream: new Readable(),
+  encoding: '1',
+  size: 1,
+  destination: '',
+  filename: '',
+  mimetype: 'text/csv',
+  buffer: Buffer.from('one,two,three'),
+};
+
+afterEach(() => {
+  mockfs.restore();
+});
+
+mockfs({
+  '/files/': {
+    'file.csv': 'file content here',
+  },
+});
 
 describe('ImportController', () => {
   let controller: ImportController;
   let service: ImportService;
 
   const createImportDto: CreateImportDto = {
-    timestamp: 1672863474,
-    headache: true,
+    records: [{ timestamp: 1672863474, headache: true }],
   };
 
   const mockImport = {
-    timestamp: 1672863474,
-    headache: true,
+    records: [{ timestamp: 1672863474, headache: true }],
   };
 
   beforeEach(async () => {
@@ -25,8 +48,12 @@ describe('ImportController', () => {
           provide: ImportService,
           useValue: {
             findOne: jest.fn().mockResolvedValue({
-              timestamp: 1672863474,
-              headache: true,
+              records: [
+                {
+                  timestamp: 1672863474,
+                  headache: true,
+                },
+              ],
             }),
             create: jest.fn().mockResolvedValue(createImportDto),
           },
@@ -44,24 +71,20 @@ describe('ImportController', () => {
 
   describe('create', () => {
     it('should create a new import', async () => {
-      const createSpy = jest
-        .spyOn(service, 'create')
-        .mockResolvedValueOnce(mockImport);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const createSpy = jest.spyOn(service, 'create').mockResolvedValueOnce(mockImport);
 
-      await controller.create(createImportDto);
+      await controller.create(file);
       expect(createSpy).toHaveBeenCalledWith(createImportDto);
 
-      await expect(controller.create(createImportDto)).resolves.toEqual(
-        mockImport,
-      );
+      await expect(controller.create(file)).resolves.toEqual(mockImport);
     });
   });
 
   describe('findOne', () => {
     it('should return the document', async () => {
-      await expect(
-        controller.findOne('63b5e128f7285a274efba552'),
-      ).resolves.toEqual({
+      await expect(controller.findOne('63b5e128f7285a274efba552')).resolves.toEqual({
         timestamp: 1672863474,
         headache: true,
       });
