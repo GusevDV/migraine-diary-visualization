@@ -1,8 +1,6 @@
 export interface IImport {
-  readonly records: [
-    {
-      readonly timestamp: number;
-      readonly headache: boolean;
-    },
-  ];
+  readonly records: Array<{
+    readonly timestamp: number;
+    readonly headache: boolean;
+  }>;
 }

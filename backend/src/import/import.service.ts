@@ -24,7 +24,7 @@ export class ImportService {
     return existingImport;
   }
 
-  parse(buffer: Buffer): CreateImportDto {
+  parse(buffer: Buffer): IImport {
     const workSheets = xlsx.parse(buffer, {
       sheets: 0,
     });

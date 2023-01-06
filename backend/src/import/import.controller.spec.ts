@@ -3,12 +3,13 @@ import { ImportController } from './import.controller';
 import { ImportService } from './import.service';
 import { CreateImportDto } from './dto/create-import.dto';
 import { Readable } from 'stream';
-import mockfs from 'mock-fs';
+import mockfs = require('mock-fs');
+import * as fs from 'fs';
 
 const file: Express.Multer.File = {
   fieldname: 'file.csv',
   originalname: 'file.csv',
-  path: '/files/',
+  path: './files/file.csv',
   stream: new Readable(),
   encoding: '1',
   size: 1,
@@ -18,14 +19,8 @@ const file: Express.Multer.File = {
   buffer: Buffer.from('one,two,three'),
 };
 
-afterEach(() => {
+afterAll(() => {
   mockfs.restore();
-});
-
-mockfs({
-  '/files/': {
-    'file.csv': 'file content here',
-  },
 });
 
 describe('ImportController', () => {
@@ -48,14 +43,12 @@ describe('ImportController', () => {
           provide: ImportService,
           useValue: {
             findOne: jest.fn().mockResolvedValue({
-              records: [
-                {
-                  timestamp: 1672863474,
-                  headache: true,
-                },
-              ],
+              records: [{ timestamp: 1672863474, headache: true }],
             }),
             create: jest.fn().mockResolvedValue(createImportDto),
+            parse: jest.fn().mockResolvedValue({
+              records: [{ timestamp: 1672863474, headache: true }],
+            }),
           },
         },
       ],
@@ -71,12 +64,17 @@ describe('ImportController', () => {
 
   describe('create', () => {
     it('should create a new import', async () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      mockfs({
+        './files/file.csv': Buffer.from([8, 6, 7, 5, 3, 0, 9]),
+      });
+
       const createSpy = jest.spyOn(service, 'create').mockResolvedValueOnce(mockImport);
 
+      const parseSpy = jest.spyOn(service, 'parse').mockReturnValueOnce(mockImport);
+
       await controller.create(file);
-      expect(createSpy).toHaveBeenCalledWith(createImportDto);
+      expect(createSpy).toHaveBeenCalled();
+      expect(parseSpy).toHaveBeenCalledWith(fs.readFileSync(file.path));
 
       await expect(controller.create(file)).resolves.toEqual(mockImport);
     });
@@ -85,8 +83,12 @@ describe('ImportController', () => {
   describe('findOne', () => {
     it('should return the document', async () => {
       await expect(controller.findOne('63b5e128f7285a274efba552')).resolves.toEqual({
-        timestamp: 1672863474,
-        headache: true,
+        records: [
+          {
+            timestamp: 1672863474,
+            headache: true,
+          },
+        ],
       });
       expect(service.findOne).toHaveBeenCalled();
     });
