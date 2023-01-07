@@ -19,6 +19,7 @@ export class ImportController {
     }),
   )
   async create(@UploadedFile() file: Express.Multer.File) {
+    // TODO needs to improve
     const createImportDto = this.importService.parse(fs.readFileSync(file.path));
     return await this.importService.create(createImportDto);
   }

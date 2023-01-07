@@ -5,11 +5,10 @@ import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 
 const mockImport = {
-  timestamp: 1672863474,
-  headache: true,
+  records: [{ timestamp: 1672863474, headache: true }],
 };
 
-describe.skip('ImportService', () => {
+describe('ImportService', () => {
   let service: ImportService;
   let model: Model<Import>;
 
@@ -20,7 +19,6 @@ describe.skip('ImportService', () => {
         {
           provide: getModelToken('Import'),
           useValue: {
-            new: jest.fn().mockResolvedValue(mockImport),
             constructor: jest.fn().mockResolvedValue(mockImport),
             find: jest.fn(),
             create: jest.fn(),
@@ -38,17 +36,16 @@ describe.skip('ImportService', () => {
     expect(service).toBeDefined();
   });
 
-  // it('should insert a new import', async () => {
-  //   jest.spyOn(model, 'create').mockImplementationOnce(() =>
-  //     Promise.resolve({
-  //       timestamp: 1672863474,
-  //       headache: true,
-  //     }),
-  //   );
-  //   const newImport = await service.create({
-  //     timestamp: 1672863474,
-  //     headache: true,
-  //   });
-  //   expect(newImport).toEqual(mockImport);
-  // });
+  it('should insert a new import', async () => {
+    jest.spyOn(model, 'create').mockImplementationOnce(() =>
+      Promise.resolve({
+        save: jest.fn().mockResolvedValue({ records: [{ timestamp: 1672863474, headache: true }] }),
+      }),
+    );
+    const newImport = await service.create({
+      records: [{ timestamp: 1672863474, headache: true }],
+    });
+
+    expect(newImport).toEqual(mockImport);
+  });
 });

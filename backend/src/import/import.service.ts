@@ -12,7 +12,7 @@ export class ImportService {
   constructor(@InjectModel('Import') private importModel: Model<IImport>) {}
 
   async create(createImportDto: CreateImportDto): Promise<IImport> {
-    const newImport = await new this.importModel(createImportDto);
+    const newImport = await this.importModel.create(createImportDto);
     return newImport.save();
   }
 
